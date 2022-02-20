@@ -1,53 +1,58 @@
-document.getElementById('diposit-button').addEventListener('click', function (){
-    const depositInput = document.getElementById('deposit-input');
-    const newdepositAmountText = depositInput.value;
-    // ডিপোজিটের মধ্যে ইন্টিজার রুপে সেট করার 
-    const newdepositAmount = parseFloat(newdepositAmountText);
-    //যেখানে এমাউন্ট দেখাবে সেটাকে এখানে তুলে নিয়ে আসা।
+function getInputValue(fieldId){
+    const inputFieldId = document.getElementById(fieldId);
+    const inputFieldText = inputFieldId.value;
+    const inputFieldValue = parseFloat(inputFieldText);
+    inputFieldId.value = '';
+    return inputFieldValue;
+}
+function upadeteTotal (fieldId , amount){
+    const topFieldId = document.getElementById(fieldId);
+    const fieldIdText = topFieldId.innerText;
+    const fieldIdValue = parseFloat(fieldIdText);
+   const newTotal = fieldIdValue + amount;
+   topFieldId.innerText = newTotal;
+}
+// deposit button working system 
 
-    const dipositTotal = document.getElementById('diposit');
-    const previousDepositText = dipositTotal.innerText;
-    const previousDepositAmount = parseFloat(previousDepositText);
-    // ইনপুটের সাথে ডিপোজিটের এমাউন্ট যোগ করা 
-    const newDepositTotal = previousDepositAmount + newdepositAmount;
-    // যোগ করে সেখানে ডিসপ্লে করানো
-    dipositTotal.innerText = newDepositTotal;
-    //ব্যালেন্সের সাথেও যোগ করা
-    const balanceTotal = document.getElementById('balance');
-    const balanceTotalText = balanceTotal.innerText;
-    const previousBalance = parseFloat(balanceTotalText);
-    const newBalanceTotal = previousBalance + newdepositAmount;
-    balanceTotal.innerText = newBalanceTotal;
-
-
-    // ইনপুটের ভিতরের ভ্যালু গুলোকে রিমুভ করা 
-    depositInput.value = '';
+document.getElementById('diposit-button').addEventListener('click', function(){
+    const depositeInputValue = getInputValue('deposit-input');
+    if(depositeInputValue<0){
+        swal("Your Have Not enough Balance", "Please deposite balance and try again!")
+    }
+    else if(isNaN(depositeInputValue)){
+        swal("Your Have Not enough Balance", "Please deposite balance and try again!")
+    }
+    else{
+        upadeteTotal('diposit',  depositeInputValue);
+        upadeteTotal('balance',depositeInputValue);
+    }
 })
 
-// উইথড্র করার জন্য যা করা যায়
+// withdraw button working system 
 
-// প্রথমে কোন বাটনে চাপ দিলে উইথ ড্রে হবে সেটাকে ইভেন হ্যান্ডলার করতে হবে 
-
-document.getElementById('withdra-button').addEventListener('click', function (){
-    const withdrawInput = document.getElementById('withdraw-input');
-    const withdrawAmountText =withdrawInput.value;
-    const withdrawAmount = parseFloat(withdrawAmountText);
-
-    const previousWithdrawTotal = document.getElementById('withdraw');
-    const previousWithdrawText = previousWithdrawTotal.innerText;
-    const previousWithdraw = parseFloat(previousWithdrawText);
-
-    const totalWithdraw =  withdrawAmount + previousWithdraw;
-    previousWithdrawTotal.innerText = totalWithdraw;
-
-    const balanceTotal = document.getElementById('balance');
-    const balanceTotalText = balanceTotal.innerText;
-    const previousBalance = parseFloat(balanceTotalText);
-
-    const afterWithdraTotalBalance = previousBalance - withdrawAmount;
-    balanceTotal.innerText = afterWithdraTotalBalance;
-
-    withdrawInput.value = '';
+document.getElementById('withdra-button').addEventListener('click', function(){
+    const withdrawInputValue = getInputValue('withdraw-input');
+    const withdraw = document.getElementById('balance');
+    const withdrawText = withdraw.innerText;
+    const withdrawValue = parseFloat(withdrawText);
+    if(withdrawValue<withdrawInputValue){
+        swal("Your Have Not enough Balance", "Please deposite balance and try again!")
+       
+    }
+    else if(isNaN(withdrawInputValue)){
+        swal("Input a Valid number", " Or Please deposite balance and try again!")
+    }
     
-
- })
+    else{
+        upadeteTotal("withdraw",withdrawInputValue);
+        const totalBalance = withdrawValue - withdrawInputValue;
+        withdraw.innerText = totalBalance;
+        swal({
+            title: "Withdraw Succes",
+            text: "Click ok and see the dashboard",
+            icon: "success",
+            button: "Ok",
+          });
+    }
+    
+})
